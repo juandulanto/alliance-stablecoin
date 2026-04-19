@@ -68,6 +68,66 @@
         }
 
         /* ============================================
+           INTRO-ONLY OVERLAYS
+           Two stacked effects that only live during the opening ~3s and
+           then slowly fade to nothing:
+             1. #hero-nebula-drift — three soft blue-purple radial blobs
+                blended via `screen` so they *add* light like distant gas
+                clouds. A 48s transform animation makes them drift.
+             2. #hero-star-mask — SVG turbulence noise thresholded to
+                ~15% dark specks, blended via `multiply` so it darkens
+                a random fraction of the bright pinpoint stars in the
+                baked video underneath.
+           Both share an introFade keyframe that holds at full through
+           the first half of the animation and then eases to 0.
+           ============================================ */
+        #hero-nebula-drift {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+            background:
+                radial-gradient(ellipse 55% 45% at 32% 48%, rgba(88,110,200,0.16), transparent 62%),
+                radial-gradient(ellipse 60% 50% at 72% 42%, rgba(140,90,190,0.14), transparent 65%),
+                radial-gradient(ellipse 45% 40% at 50% 70%, rgba(72,96,180,0.12), transparent 60%);
+            filter: blur(22px);
+            mix-blend-mode: screen;
+            transform-origin: 50% 50%;
+            opacity: 1;
+            animation:
+                nebulaDrift 48s ease-in-out infinite alternate,
+                introFadeLong 8s ease-out forwards;
+        }
+        @keyframes nebulaDrift {
+            0%   { transform: translate3d(-1.6%,  0.2%, 0) scale(1.00); }
+            50%  { transform: translate3d( 1.4%, -0.6%, 0) scale(1.03); }
+            100% { transform: translate3d( 1.9%,  0.8%, 0) scale(1.06); }
+        }
+        @keyframes introFadeLong {
+            0%, 45% { opacity: 1; }
+            100%    { opacity: 0; }
+        }
+
+        #hero-star-mask {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+            /* Inline SVG: feTurbulence → feColorMatrix threshold yields
+               sparse dark specks (~15% area coverage). Multiply blend
+               darkens roughly 15% of bright star pixels underneath. */
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='720' height='720' preserveAspectRatio='none'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='3.2' numOctaves='1' seed='7' stitchTiles='stitch'/><feColorMatrix type='matrix' values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 30 -26'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+            background-size: 100% 100%;
+            mix-blend-mode: multiply;
+            opacity: 1;
+            animation: introFadeShort 6s ease-out forwards;
+        }
+        @keyframes introFadeShort {
+            0%, 50% { opacity: 1; }
+            100%    { opacity: 0; }
+        }
+
+        /* ============================================
            SCROLL HINT
            ============================================ */
         .scroll-hint {
@@ -670,6 +730,11 @@
        disableremoteplayback
        tabindex="-1"
        aria-hidden="true"></video>
+
+<!-- Intro-only overlays (fade out over first ~6–8 seconds):
+     subtle drifting blue-purple nebula wash + sparse star mask -->
+<div id="hero-nebula-drift" aria-hidden="true"></div>
+<div id="hero-star-mask" aria-hidden="true"></div>
 
 <!-- Dark vignette for hero text legibility -->
 <div id="hero-veil"></div>
