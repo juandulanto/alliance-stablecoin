@@ -786,6 +786,28 @@
             .chain { gap: 8px; }
             .chain-step { padding: 8px 14px; font-size: 0.78rem; }
             .hero { height: 182vh; }
+
+            /* Mobile: scroll-scrubbed video is unreliable on narrow viewports
+               (iOS throttles seeks, low-end Android stalls), so hide the
+               <video> and paint the poster frame as a fixed pseudo-element
+               that mimics the video's positioning exactly. Keeps the Milky
+               Way aesthetic with no decoder cost.
+               Using body::before (instead of background-attachment: fixed)
+               because iOS Safari silently falls back to scroll-attached
+               backgrounds, which tiles the image weirdly across a 182vh
+               hero. A fixed-position element works reliably everywhere. */
+            #hero-video { display: none; }
+            body::before {
+                content: "";
+                position: fixed;
+                inset: 0;
+                z-index: 0;
+                background-image: url('hero-poster.jpg');
+                background-size: cover;
+                background-position: center center;
+                background-color: #000;
+                pointer-events: none;
+            }
         }
 
         /* Accessibility: reduce motion */
@@ -807,6 +829,7 @@
      to load the higher-bitrate encode (hero-scene-hd.mp4). -->
 <video id="hero-video"
        preload="auto"
+       poster="hero-poster.jpg"
        muted
        playsinline
        webkit-playsinline
@@ -1110,7 +1133,9 @@
     function tick() {
         if (hasDuration) {
             const diff = targetTime - smoothTime;
-            smoothTime += diff * 0.18;
+            // 0.11 lerp = softer than 0.18; a bit more lag on fast scrolls
+            // but the decoder stays ahead and motion looks smoother.
+            smoothTime += diff * 0.11;
             // Snap when close enough so we don't bleed tiny sub-pixel seeks.
             if (Math.abs(diff) < 0.01) smoothTime = targetTime;
             // Only seek if we've drifted more than ~1/48s (half a frame) —
@@ -1127,6 +1152,11 @@
         smoothTime = 0;
         video.currentTime = 0;
         setTargetFromScroll();
+        // Warm the decoder pipeline: Safari (and to a lesser extent Chrome)
+        // are sluggish on the first scroll-driven seek if the video has
+        // never played. A single play/pause primes the decoder so the
+        // first scrub is smooth instead of stalling on frame 0.
+        video.play().then(() => video.pause()).catch(() => {});
     });
     video.addEventListener('error', (e) => {
         console.warn('[hero] video failed to load', video.error);
