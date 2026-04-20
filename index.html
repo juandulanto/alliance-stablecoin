@@ -406,7 +406,11 @@
             letter-spacing: 0.26em;
             text-transform: uppercase;
             color: rgba(245,248,255,0.98);
+            /* Sharp black under-shadow first so the type reads against bright
+               galactic regions, then the blue nebula glow for aesthetic. */
             text-shadow:
+                0 1px 2px rgba(0,0,0,0.95),
+                0 2px 14px rgba(0,0,0,0.85),
                 0 0 18px rgba(130,160,255,0.55),
                 0 0 6px rgba(220,225,255,0.55);
         }
@@ -419,7 +423,12 @@
             letter-spacing: -0.02em;
             max-width: 16ch;
             margin-bottom: clamp(22px, 3vh, 36px);
-            text-shadow: 0 2px 30px rgba(0,0,0,0.9), 0 0 80px rgba(0,0,0,0.5);
+            /* 1-2px sharp black under-shadow so glyph edges stay crisp over
+               bright stars, plus the softer blur layers for nebula depth. */
+            text-shadow:
+                0 1px 2px rgba(0,0,0,0.95),
+                0 2px 22px rgba(0,0,0,0.92),
+                0 0 60px rgba(0,0,0,0.55);
             opacity: 0;
             animation: fadeUp 1.6s cubic-bezier(0.16,1,0.3,1) 0.9s forwards;
         }
@@ -432,10 +441,13 @@
             font-family: var(--font-display);
             font-size: clamp(1.1rem, 2vw, 1.6rem);
             font-style: italic;
-            color: rgba(220,226,242,0.85);
+            color: rgba(230,234,248,0.96);
             margin-bottom: clamp(16px, 2.4vh, 24px);
             max-width: 36ch;
-            text-shadow: 0 2px 20px rgba(0,0,0,0.9);
+            text-shadow:
+                0 1px 2px rgba(0,0,0,0.95),
+                0 2px 16px rgba(0,0,0,0.88),
+                0 0 28px rgba(0,0,0,0.5);
             opacity: 0;
             animation: fadeUp 1.4s cubic-bezier(0.16,1,0.3,1) 1.4s forwards;
         }
@@ -477,6 +489,28 @@
             transition: opacity 1.2s ease, transform 1.2s ease;
             width: min(90vw, 42ch);
         }
+        /* Scrim behind the atlas caption so the white italic line reads
+           against the bright galactic-center region of the atlas reveal.
+           Same radial-fade pattern as .hero-stage::before, sized for the
+           smaller caption block. */
+        .atlas-caption::before {
+            content: '';
+            position: absolute;
+            z-index: -1;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: clamp(380px, 110%, 720px);
+            height: clamp(180px, 220%, 280px);
+            background:
+                radial-gradient(ellipse at 50% 50%,
+                    rgba(0,0,0,0.68) 0%,
+                    rgba(0,0,0,0.48) 38%,
+                    rgba(0,0,0,0.20) 66%,
+                    rgba(0,0,0,0.0) 88%);
+            pointer-events: none;
+            filter: blur(5px);
+        }
         .atlas-caption.on {
             opacity: 1;
             transform: translate(-50%, 0);
@@ -492,9 +526,12 @@
             font-family: var(--font-display);
             font-size: clamp(1.4rem, 2.4vw, 2rem);
             font-style: italic;
-            color: rgba(240,244,255,0.95);
+            color: rgba(240,244,255,0.97);
             line-height: 1.35;
-            text-shadow: 0 1px 30px rgba(0,0,0,0.9);
+            text-shadow:
+                0 1px 2px rgba(0,0,0,0.95),
+                0 2px 20px rgba(0,0,0,0.9),
+                0 0 34px rgba(0,0,0,0.55);
         }
 
         /* ============================================
@@ -785,28 +822,43 @@
             .hero-title { font-size: clamp(2.4rem, 11vw, 4rem); }
             .chain { gap: 8px; }
             .chain-step { padding: 8px 14px; font-size: 0.78rem; }
-            .hero { height: 182vh; }
+            /* 140vh (down from 182vh) — without the video-scrub visual
+               feedback, a long hero just feels like dead scroll. 140vh
+               still gives the hero-stage fade + atlas-caption reveal
+               enough room to play (atlas on at 72% = ~29vh of scroll). */
+            .hero { height: 140vh; }
 
             /* Mobile: scroll-scrubbed video is unreliable on narrow viewports
                (iOS throttles seeks, low-end Android stalls), so hide the
-               <video> and paint the poster frame as a fixed pseudo-element
-               that mimics the video's positioning exactly. Keeps the Milky
-               Way aesthetic with no decoder cost.
-               Using body::before (instead of background-attachment: fixed)
-               because iOS Safari silently falls back to scroll-attached
-               backgrounds, which tiles the image weirdly across a 182vh
-               hero. A fixed-position element works reliably everywhere. */
+               <video> and paint the poster frame as a fixed pseudo-element.
+               Two iOS Safari quirks to work around:
+               1. URL bar collapses on first scroll, changing viewport height
+                  mid-gesture. Sizing the poster in `100lvh` (large viewport
+                  height) locks it to the URL-bar-collapsed size, so it
+                  doesn't reflow and recrop during the first swipe — that's
+                  what makes the initial scroll feel janky.
+               2. A fixed background layer that covers the viewport causes
+                  full-layer repaints every scroll frame on mobile GPUs.
+                  `transform: translateZ(0)` promotes it to its own compositor
+                  layer, so scroll just moves the layer (cheap) instead of
+                  repainting it. */
             #hero-video { display: none; }
             body::before {
                 content: "";
                 position: fixed;
-                inset: 0;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                height: 100vh;       /* fallback for older iOS */
+                height: 100lvh;      /* lock to URL-bar-collapsed viewport */
                 z-index: 0;
                 background-image: url('hero-poster.jpg');
                 background-size: cover;
                 background-position: center center;
                 background-color: #000;
                 pointer-events: none;
+                transform: translateZ(0);
+                will-change: transform;
             }
         }
 
@@ -840,6 +892,15 @@
     (function () {
         var v = document.getElementById('hero-video');
         if (!v) return;
+        // Skip the scrub video entirely on mobile. The max-width:600px
+        // media query hides the element, but without this guard the
+        // browser still downloads the 12 MB mp4 and spins up the H.264
+        // decoder — both steal CPU/battery/bandwidth on the first scroll
+        // and make it feel stuttery. The poster (hero-poster.jpg) is
+        // the mobile visual, and that's already in the fixed background.
+        try {
+            if (window.matchMedia && window.matchMedia('(max-width: 600px)').matches) return;
+        } catch (e) { /* fall through and load the video */ }
         var hd = false;
         try { hd = new URLSearchParams(window.location.search).has('hd'); } catch (e) { /* older browsers: default to standard */ }
         v.src = hd ? 'hero-scene-hd.mp4' : 'hero-scene.mp4';
