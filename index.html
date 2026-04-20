@@ -136,11 +136,11 @@
             z-index: 2;
             pointer-events: none;
             background: #000;
-            opacity: 0.15;
+            opacity: 0.40;
             animation: introFadeDim 8s ease-out forwards;
         }
         @keyframes introFadeDim {
-            0%, 45% { opacity: 0.15; }
+            0%, 45% { opacity: 0.40; }
             100%    { opacity: 0; }
         }
 
@@ -451,11 +451,13 @@
         }
 
         .hero-body {
-            font-size: clamp(0.98rem, 1.25vw, 1.1rem);
-            color: rgba(210,215,228,0.85);
+            font-size: clamp(1rem, 1.3vw, 1.14rem);
+            color: rgba(232,236,248,0.98);
             max-width: 54ch;
             line-height: 1.72;
-            text-shadow: 0 1px 16px rgba(0,0,0,0.9);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.95),
+                         0 2px 14px rgba(0,0,0,0.88),
+                         0 0 28px rgba(0,0,0,0.6);
             opacity: 0;
             animation: fadeUp 1.4s cubic-bezier(0.16,1,0.3,1) 1.9s forwards;
         }
@@ -490,8 +492,11 @@
             transform: translate(-50%, 0);
         }
         .atlas-caption .eyebrow {
-            color: rgba(230,235,250,0.55);
+            color: rgba(240,244,255,0.98);
             margin-bottom: 14px;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.95),
+                         0 2px 16px rgba(0,0,0,0.85),
+                         0 0 24px rgba(0,0,0,0.55);
         }
         .atlas-caption .line {
             font-family: var(--font-display);
@@ -731,8 +736,11 @@
             background: rgba(16, 20, 30, 0.75);
         }
         .chain-arrow {
-            color: var(--text-dim);
-            font-size: 0.85rem;
+            color: #5B8BFF;
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-shadow: 0 0 14px rgba(91,139,255,0.6),
+                         0 0 24px rgba(122,107,255,0.35);
         }
 
         /* ============================================
@@ -827,10 +835,7 @@
 <!-- Scroll hint (hides on scroll) -->
 <div class="scroll-hint" id="scroll-hint">scroll to travel</div>
 
-<!-- Audio toggle -->
-<button class="audio-toggle" id="audio-toggle" aria-label="Toggle ambient sound">
-    <span class="bars"><span></span><span></span><span></span></span>
-</button>
+<!-- Audio toggle removed per user request -->
 
 <!-- TOPNAV -->
 <nav class="topnav" id="topnav">
@@ -1355,21 +1360,24 @@ function buildAmbient() {
     return { ctx, master, melodyInterval };
 }
 
-audioToggle.addEventListener('click', () => {
-    if (!audioCtx) {
-        audioNodes = buildAmbient();
-        audioCtx = audioNodes.ctx;
-    }
-    // toggle
-    audioOn = !audioOn;
-    const target = audioOn ? 0.32 : 0;
-    const now = audioCtx.currentTime;
-    audioNodes.master.gain.cancelScheduledValues(now);
-    audioNodes.master.gain.linearRampToValueAtTime(target, now + 1.6);
-    audioToggle.classList.toggle('on', audioOn);
-    // must resume on user gesture
-    if (audioCtx.state === 'suspended') audioCtx.resume();
-});
+// Audio toggle removed — guard against missing element.
+if (audioToggle) {
+    audioToggle.addEventListener('click', () => {
+        if (!audioCtx) {
+            audioNodes = buildAmbient();
+            audioCtx = audioNodes.ctx;
+        }
+        // toggle
+        audioOn = !audioOn;
+        const target = audioOn ? 0.32 : 0;
+        const now = audioCtx.currentTime;
+        audioNodes.master.gain.cancelScheduledValues(now);
+        audioNodes.master.gain.linearRampToValueAtTime(target, now + 1.6);
+        audioToggle.classList.toggle('on', audioOn);
+        // must resume on user gesture
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+    });
+}
 </script>
 </body>
 </html>
