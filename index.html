@@ -57,6 +57,30 @@
             background: #000;        /* black until first frame paints */
         }
 
+        /* Corner vignette: the delogo filter leaves a subtle rectangular
+           smudge on bright late-video frames (atlas reveal) where the
+           Veo watermark sat. A radial darken gradient over the bottom-right
+           corner makes that patch fall off into shadow naturally. Ellipse
+           shape + generous radius so the falloff is imperceptible, not a
+           visible overlay. */
+        #hero-corner-dim {
+            position: fixed;
+            right: 0;
+            bottom: 0;
+            width: 38vw;
+            height: 34vh;
+            max-width: 520px;
+            max-height: 340px;
+            z-index: 1;
+            pointer-events: none;
+            background: radial-gradient(ellipse at 100% 100%,
+                rgba(0,0,0,0.85) 0%,
+                rgba(0,0,0,0.62) 22%,
+                rgba(0,0,0,0.36) 44%,
+                rgba(0,0,0,0.16) 66%,
+                rgba(0,0,0,0) 85%);
+        }
+
         /* Flat 15% black dim during the intro only. Reduces overall star
            brightness so the opening feels less busy, then fades away. */
         #hero-intro-dim {
@@ -924,6 +948,7 @@
        disableremoteplayback
        tabindex="-1"
        aria-hidden="true"></video>
+<div id="hero-corner-dim" aria-hidden="true"></div>
 <script>
     (function () {
         var v = document.getElementById('hero-video');
