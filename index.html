@@ -127,6 +127,23 @@
             100%    { opacity: 0; }
         }
 
+        /* Flat 15% black dim layered ABOVE the nebula + star-mask during
+           the intro. Reduces overall star brightness so the opening feels
+           less busy, then fades away together with the other intro FX. */
+        #hero-intro-dim {
+            position: fixed;
+            inset: 0;
+            z-index: 2;
+            pointer-events: none;
+            background: #000;
+            opacity: 0.15;
+            animation: introFadeDim 8s ease-out forwards;
+        }
+        @keyframes introFadeDim {
+            0%, 45% { opacity: 0.15; }
+            100%    { opacity: 0; }
+        }
+
         /* ============================================
            SCROLL HINT
            ============================================ */
@@ -331,7 +348,7 @@
            ============================================ */
         .hero {
             position: relative;
-            height: 360vh; /* total scroll depth for cinematic */
+            height: 252vh; /* total scroll depth (-30% so next section arrives sooner) */
         }
         .hero-pin {
             position: sticky;
@@ -523,36 +540,9 @@
                 drop-shadow(0 0 26px rgba(120,170,255,0.45));
             animation: atlasPulse 2.6s cubic-bezier(0.4,0,0.6,1) infinite;
         }
-        /* Four-point spike cross rendered as a ::before so it scales
-           with the star and inherits the same filter glow. */
-        .atlas-stars .astar::before {
-            content: '';
-            position: absolute;
-            inset: -160%;
-            background:
-                linear-gradient(to bottom,
-                    transparent 46%,
-                    rgba(255,255,255,0.75) 49.2%,
-                    rgba(255,255,255,1) 50%,
-                    rgba(255,255,255,0.75) 50.8%,
-                    transparent 54%),
-                linear-gradient(to right,
-                    transparent 46%,
-                    rgba(255,255,255,0.75) 49.2%,
-                    rgba(255,255,255,1) 50%,
-                    rgba(255,255,255,0.75) 50.8%,
-                    transparent 54%);
-            mask:
-                radial-gradient(ellipse 50% 8% at 50% 50%, #000 0%, #000 30%, transparent 85%),
-                radial-gradient(ellipse 8% 50% at 50% 50%, #000 0%, #000 30%, transparent 85%);
-            mask-composite: add;
-            -webkit-mask:
-                radial-gradient(ellipse 50% 8% at 50% 50%, #000 0%, #000 30%, transparent 85%),
-                radial-gradient(ellipse 8% 50% at 50% 50%, #000 0%, #000 30%, transparent 85%);
-            -webkit-mask-composite: source-over;
-            opacity: 0.85;
-            pointer-events: none;
-        }
+        /* Spike cross intentionally disabled — user wants plain
+           pulsating dots, not four-point sparkles. */
+        .atlas-stars .astar::before { display: none; }
         @keyframes atlasPulse {
             0%, 100% {
                 transform: translate(-50%, -50%) scale(0.78);
@@ -797,7 +787,7 @@
             .hero-title { font-size: clamp(2.4rem, 11vw, 4rem); }
             .chain { gap: 8px; }
             .chain-step { padding: 8px 14px; font-size: 0.78rem; }
-            .hero { height: 260vh; }
+            .hero { height: 182vh; }
         }
 
         /* Accessibility: reduce motion */
@@ -825,9 +815,11 @@
        aria-hidden="true"></video>
 
 <!-- Intro-only overlays (fade out over first ~6–8 seconds):
-     subtle drifting blue-purple nebula wash + sparse star mask -->
+     subtle drifting blue-purple nebula wash + sparse star mask +
+     flat 15% dim on top so the opening reads darker / less busy -->
 <div id="hero-nebula-drift" aria-hidden="true"></div>
 <div id="hero-star-mask" aria-hidden="true"></div>
+<div id="hero-intro-dim" aria-hidden="true"></div>
 
 <!-- Dark vignette for hero text legibility -->
 <div id="hero-veil"></div>
@@ -1050,7 +1042,7 @@
     const scrollHint = document.getElementById('scroll-hint');
     if (!video) return;
 
-    // Hero section is 360vh tall (see .hero CSS). scrollProgress is the
+    // Hero section is 252vh tall (see .hero CSS). scrollProgress is the
     // fraction of scroll within the hero before the section scrolls past.
     let scrollProgress = 0;
     let targetTime = 0;
