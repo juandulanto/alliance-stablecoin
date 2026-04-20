@@ -877,9 +877,11 @@
 <body>
 
 <!-- Hero scene: scroll-scrubbed reference video. This IS the Milky-Way→Atlas
-     transition, exactly as shot. Scroll scrubs video.currentTime. -->
+     transition, exactly as shot. Scroll scrubs video.currentTime.
+     src is set inline below so we can A/B between the standard and
+     HD encodes without double-downloading. Append ?hd=1 to the URL
+     to load the higher-bitrate encode (hero-scene-hd.mp4). -->
 <video id="hero-video"
-       src="hero-scene.mp4"
        preload="auto"
        muted
        playsinline
@@ -887,6 +889,15 @@
        disableremoteplayback
        tabindex="-1"
        aria-hidden="true"></video>
+<script>
+    (function () {
+        var v = document.getElementById('hero-video');
+        if (!v) return;
+        var hd = false;
+        try { hd = new URLSearchParams(window.location.search).has('hd'); } catch (e) { /* older browsers: default to standard */ }
+        v.src = hd ? 'hero-scene-hd.mp4' : 'hero-scene.mp4';
+    })();
+</script>
 
 <!-- Intro-only overlays (fade out over first ~6–8 seconds):
      subtle drifting blue-purple nebula wash + sparse star mask +
