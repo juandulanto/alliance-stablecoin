@@ -344,6 +344,72 @@
         @media (max-width: 760px) { .nav-links { display: none; } }
 
         /* ============================================
+           LANGUAGE TOGGLE (upper-right nav)
+           Matches the pattern on Joe's homepage: globe icon +
+           current language + chevron, dropdown with the three
+           supported languages. Client-side only; swaps DOM text
+           via the [data-i18n] attribute system below.
+           ============================================ */
+        .lang-toggle-wrap {
+            position: relative;
+            font-family: var(--font-body);
+        }
+        .lang-toggle-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: rgba(230,235,250,0.7);
+            font-family: var(--font-body);
+            font-weight: 500;
+            font-size: 0.78rem;
+            letter-spacing: 0.04em;
+            padding: 6px 10px;
+            border-radius: 6px;
+            transition: color 0.2s;
+        }
+        .lang-toggle-btn:hover { color: #fff; }
+        .lang-toggle-btn svg.globe { opacity: 0.6; }
+        .lang-toggle-btn svg.chev {
+            opacity: 0.5;
+            transition: transform 0.2s;
+        }
+        .lang-toggle-wrap.open .lang-toggle-btn svg.chev { transform: rotate(180deg); }
+        .lang-dropdown {
+            position: absolute;
+            top: calc(100% + 6px);
+            right: 0;
+            background: rgba(10,12,18,0.92);
+            backdrop-filter: blur(14px);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 8px;
+            padding: 6px 0;
+            min-width: 140px;
+            display: none;
+            z-index: 110;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .lang-toggle-wrap.open .lang-dropdown { display: block; }
+        .lang-option {
+            display: block;
+            width: 100%;
+            text-align: left;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: rgba(230,235,250,0.7);
+            font-family: var(--font-body);
+            font-size: 0.78rem;
+            letter-spacing: 0.02em;
+            padding: 8px 16px;
+            transition: color 0.15s, background 0.15s;
+        }
+        .lang-option:hover { color: #fff; background: rgba(255,255,255,0.04); }
+        .lang-option.active { color: #fff; }
+
+        /* ============================================
            HERO — TALL PIN-SCROLL SECTION
            ============================================ */
         .hero {
@@ -833,7 +899,7 @@
 <div id="hero-veil"></div>
 
 <!-- Scroll hint (hides on scroll) -->
-<div class="scroll-hint" id="scroll-hint">scroll to travel</div>
+<div class="scroll-hint" id="scroll-hint" data-i18n="hero.scroll">scroll to travel</div>
 
 <!-- Audio toggle removed per user request -->
 
@@ -841,14 +907,25 @@
 <nav class="topnav" id="topnav">
     <div class="logo">
         <img src="colossus-icon-white.png" alt="Colossus">
-        <span class="logo-text">The Open Stablecoin Card Alliance</span>
+        <span class="logo-text" data-i18n="nav.brand">The Open Stablecoin Card Alliance</span>
     </div>
     <ul class="nav-links">
-        <li><a href="#how">How It Works</a></li>
-        <li><a href="#alliance">The Alliance</a></li>
-        <li><a href="#faq">FAQ</a></li>
+        <li><a href="#how" data-i18n="nav.how">How It Works</a></li>
+        <li><a href="#alliance" data-i18n="nav.alliance">The Alliance</a></li>
+        <li><a href="#faq" data-i18n="nav.faq">FAQ</a></li>
     </ul>
-    <div style="width:1px"></div>
+    <div class="lang-toggle-wrap" id="lang-toggle-wrap">
+        <button class="lang-toggle-btn" id="lang-toggle-btn" aria-label="Change language" aria-haspopup="true" aria-expanded="false">
+            <svg class="globe" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            <span class="lang-current" id="lang-current">English</span>
+            <svg class="chev" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="lang-dropdown" role="menu">
+            <button class="lang-option" data-lang="en" role="menuitem">English</button>
+            <button class="lang-option" data-lang="es" role="menuitem">Español</button>
+            <button class="lang-option" data-lang="pt" role="menuitem">Português</button>
+        </div>
+    </div>
 </nav>
 
 <!-- SITE CONTENT -->
@@ -863,14 +940,14 @@
         <div class="hero-stage" id="hero-stage" data-chapter="1">
             <div class="hero-powered">
                 <img src="colossus-icon-white.png" alt="Colossus">
-                <span>Powered by Colossus</span>
+                <span data-i18n="hero.powered">Powered by Colossus</span>
             </div>
 
-            <h1 class="hero-title">The Open Stablecoin<br>Card <em>Alliance.</em></h1>
+            <h1 class="hero-title" data-i18n-html="hero.title">The Open Stablecoin<br>Card <em>Alliance.</em></h1>
 
-            <p class="hero-subtitle">A coalition of card issuers. A new stablecoin-native credit network.</p>
+            <p class="hero-subtitle" data-i18n="hero.subtitle">A coalition of card issuers. A new stablecoin-native credit network.</p>
 
-            <p class="hero-body">
+            <p class="hero-body" data-i18n="hero.body">
                 Add a stablecoin credit network to your cards. Keep your legacy network.
                 Founding members shape governance, set interchange policy, and write the rules
                 for a stablecoin-native card network.
@@ -878,8 +955,8 @@
         </div>
 
         <div class="atlas-caption" id="atlas-caption">
-            <div class="eyebrow">Carrying the weight of the world</div>
-            <div class="line">Shape the network from day one.</div>
+            <div class="eyebrow" data-i18n="atlas.eyebrow">Carrying the weight of the world</div>
+            <div class="line" data-i18n="atlas.line">Shape the network from day one.</div>
         </div>
 
         <!-- Six pulsating stars positioned over the atlas figure's face
@@ -905,19 +982,19 @@
     <div class="metrics-grid">
         <div class="metric">
             <span class="metric-value" data-counter data-target="200000" data-suffix="K+" data-format="kplus">1</span>
-            <span class="metric-label">Cards deploying</span>
+            <span class="metric-label" data-i18n="metrics.cards">Cards deploying</span>
         </div>
         <div class="metric">
             <span class="metric-value" data-counter data-target="1.4" data-suffix="B" data-prefix="$" data-format="decimal" data-decimals="1">$0.0B</span>
-            <span class="metric-label">Annual volume committed</span>
+            <span class="metric-label" data-i18n="metrics.volume">Annual volume committed</span>
         </div>
         <div class="metric">
-            <span class="metric-value">INSTANT</span>
-            <span class="metric-label">Stablecoin settlement</span>
+            <span class="metric-value" data-i18n="metrics.instant">INSTANT</span>
+            <span class="metric-label" data-i18n="metrics.settlement">Stablecoin settlement</span>
         </div>
         <div class="metric">
             <span class="metric-value" data-counter data-target="100" data-suffix="MS" data-format="integer">0MS</span>
-            <span class="metric-label">Authorization time</span>
+            <span class="metric-label" data-i18n="metrics.auth">Authorization time</span>
         </div>
     </div>
 </section>
@@ -927,12 +1004,12 @@
      ====================================== -->
 <section class="section panel" id="how">
     <div class="section-inner">
-        <div class="eyebrow reveal">How it works</div>
+        <div class="eyebrow reveal" data-i18n="how.eyebrow">How it works</div>
         <div class="divider reveal"></div>
 
-        <h2 class="section-title reveal">A card that <em>signs its own transactions.</em></h2>
+        <h2 class="section-title reveal" data-i18n-html="how.title">A card that <em>signs its own transactions.</em></h2>
 
-        <p class="section-body reveal">
+        <p class="section-body reveal" data-i18n="how.body">
             Colossus repurposes standard EMVCo. terminals to sign blockchain transactions.
             Your cardholder taps. The terminal routes to Colossus instead of a legacy network.
             Settlement happens on-chain in USD-backed stablecoins.
@@ -941,18 +1018,18 @@
         <div class="specs-grid">
             <div class="spec-card reveal">
                 <div class="spec-num">01</div>
-                <div class="spec-title">Patented card cryptography.</div>
-                <div class="spec-desc">Each card holds an ECDSA private key in its secure element. A tap generates a signed ERC-4337 transaction. The card <em>is</em> the private key.</div>
+                <div class="spec-title" data-i18n="how.card1.title">Patented card cryptography.</div>
+                <div class="spec-desc" data-i18n-html="how.card1.desc">Each card holds an ECDSA private key in its secure element. A tap generates a signed ERC-4337 transaction. The card <em>is</em> the private key.</div>
             </div>
             <div class="spec-card reveal d1">
                 <div class="spec-num">02</div>
-                <div class="spec-title">Non-custodial settlement.</div>
-                <div class="spec-desc">Colossus never holds your funds. Stablecoins move from cardholder to merchant on a public ledger. You, your cardholder, and the merchant all see the same transaction.</div>
+                <div class="spec-title" data-i18n="how.card2.title">Non-custodial settlement.</div>
+                <div class="spec-desc" data-i18n="how.card2.desc">Colossus never holds your funds. Stablecoins move from cardholder to merchant on a public ledger. You, your cardholder, and the merchant all see the same transaction.</div>
             </div>
             <div class="spec-card reveal d2">
                 <div class="spec-num">03</div>
-                <div class="spec-title">Fee reduction for merchants.</div>
-                <div class="spec-desc">No assessments. No per-auth fees. No batch fees. No interchange downgrades. Merchants pay the tier rate and nothing else.</div>
+                <div class="spec-title" data-i18n="how.card3.title">Fee reduction for merchants.</div>
+                <div class="spec-desc" data-i18n="how.card3.desc">No assessments. No per-auth fees. No batch fees. No interchange downgrades. Merchants pay the tier rate and nothing else.</div>
             </div>
         </div>
     </div>
@@ -965,28 +1042,28 @@
      ====================================== -->
 <section class="section panel" id="alliance">
     <div class="section-inner">
-        <div class="eyebrow reveal">The Alliance</div>
+        <div class="eyebrow reveal" data-i18n="alliance.eyebrow">The Alliance</div>
         <div class="divider reveal"></div>
 
-        <h2 class="section-title reveal">The Alliance is modeled on the <em>founding of Visa.</em></h2>
+        <h2 class="section-title reveal" data-i18n-html="alliance.title">The Alliance is modeled on the <em>founding of Visa.</em></h2>
 
-        <p class="section-body reveal">In 1970, Bank of America transferred ownership of BankAmericard to a cooperative of member banks. That cooperative became Visa Inc.</p>
+        <p class="section-body reveal" data-i18n="alliance.body1">In 1970, Bank of America transferred ownership of BankAmericard to a cooperative of member banks. That cooperative became Visa Inc.</p>
 
-        <p class="section-body reveal">Colossus starts as a company-operated network. The Alliance evolves into its governing body. Members earn equity tied to the processing volume they contribute. Your equity share scales with your processing volume.</p>
+        <p class="section-body reveal" data-i18n="alliance.body2">Colossus starts as a company-operated network. The Alliance evolves into its governing body. Members earn equity tied to the processing volume they contribute. Your equity share scales with your processing volume.</p>
 
         <div class="chain reveal">
-            <div class="chain-step">Sign MOU</div>
+            <div class="chain-step" data-i18n="alliance.step1">Sign MOU</div>
             <span class="chain-arrow">&rarr;</span>
-            <div class="chain-step">Dual-issue Colossus</div>
+            <div class="chain-step" data-i18n="alliance.step2">Dual-issue Colossus</div>
             <span class="chain-arrow">&rarr;</span>
-            <div class="chain-step">Acquirer goes live</div>
+            <div class="chain-step" data-i18n="alliance.step3">Acquirer goes live</div>
             <span class="chain-arrow">&rarr;</span>
-            <div class="chain-step active">Earn equity</div>
+            <div class="chain-step active" data-i18n="alliance.step4">Earn equity</div>
         </div>
 
-        <p class="section-body reveal">Alliance members sign a binding MOU committing to dual-issue Colossus on their card programs. You keep your Visa or Mastercard relationship. Colossus routes alongside your existing network once Colossus goes live with a merchant acquirer.</p>
+        <p class="section-body reveal" data-i18n="alliance.body3">Alliance members sign a binding MOU committing to dual-issue Colossus on their card programs. You keep your Visa or Mastercard relationship. Colossus routes alongside your existing network once Colossus goes live with a merchant acquirer.</p>
 
-        <p class="section-body reveal">Founding members shape governance, set interchange policy, and write the rules for a stablecoin-native card network.</p>
+        <p class="section-body reveal" data-i18n="alliance.body4">Founding members shape governance, set interchange policy, and write the rules for a stablecoin-native card network.</p>
     </div>
 </section>
 
@@ -997,29 +1074,29 @@
      ====================================== -->
 <section class="section panel" id="faq">
     <div class="section-inner">
-        <div class="eyebrow reveal">FAQ</div>
+        <div class="eyebrow reveal" data-i18n="faq.eyebrow">FAQ</div>
         <div class="divider reveal"></div>
 
         <div class="faq-list">
             <div class="faq-item reveal">
-                <div class="faq-q">Is Colossus live?</div>
-                <div class="faq-a">The network runs on testnet with the full transaction lifecycle validated: card cryptography, authorization, on-chain settlement, and dispute resolution. Commercial launch depends on signing the first merchant acquirer, expected 2027.</div>
+                <div class="faq-q" data-i18n="faq.q1">Is Colossus live?</div>
+                <div class="faq-a" data-i18n="faq.a1">The network runs on testnet with the full transaction lifecycle validated: card cryptography, authorization, on-chain settlement, and dispute resolution. Commercial launch depends on signing the first merchant acquirer, expected 2027.</div>
             </div>
             <div class="faq-item reveal">
-                <div class="faq-q">What does the MOU commit me to?</div>
-                <div class="faq-a">Adding Colossus as an additional network on your card programs once Colossus goes live with an acquirer. The commitment is forward-looking, not a current routing obligation.</div>
+                <div class="faq-q" data-i18n="faq.q2">What does the MOU commit me to?</div>
+                <div class="faq-a" data-i18n="faq.a2">Adding Colossus as an additional network on your card programs once Colossus goes live with an acquirer. The commitment is forward-looking, not a current routing obligation.</div>
             </div>
             <div class="faq-item reveal">
-                <div class="faq-q">What about disputes and chargebacks?</div>
-                <div class="faq-a">Colossus has a full dispute lifecycle with reason codes, evidence windows, and arbitration. The structure mirrors Visa and Mastercard consumer protections, settled on-chain.</div>
+                <div class="faq-q" data-i18n="faq.q3">What about disputes and chargebacks?</div>
+                <div class="faq-a" data-i18n="faq.a3">Colossus has a full dispute lifecycle with reason codes, evidence windows, and arbitration. The structure mirrors Visa and Mastercard consumer protections, settled on-chain.</div>
             </div>
             <div class="faq-item reveal">
-                <div class="faq-q">Who operates the network today?</div>
-                <div class="faq-a">Colossus, the company. The Consortium's member-owned governance model activates as the network reaches commercial scale.</div>
+                <div class="faq-q" data-i18n="faq.q4">Who operates the network today?</div>
+                <div class="faq-a" data-i18n="faq.a4">Colossus, the company. The Consortium's member-owned governance model activates as the network reaches commercial scale.</div>
             </div>
             <div class="faq-item reveal">
-                <div class="faq-q">Where will transactions settle?</div>
-                <div class="faq-a">Transactions settle on your respective network. Colossus will manage integration with acquirers and merchants for settlement.</div>
+                <div class="faq-q" data-i18n="faq.q5">Where will transactions settle?</div>
+                <div class="faq-a" data-i18n="faq.a5">Transactions settle on your respective network. Colossus will manage integration with acquirers and merchants for settlement.</div>
             </div>
         </div>
     </div>
@@ -1031,7 +1108,7 @@
         <img src="colossus-icon-white.png" alt="Colossus">
         <span class="logo-text">Colossus</span>
     </div>
-    <span>OSCA &mdash; The Open Stablecoin Card Alliance</span>
+    <span data-i18n="footer.text">OSCA &mdash; The Open Stablecoin Card Alliance</span>
 </footer>
 
 </div><!-- end .site-content -->
@@ -1378,6 +1455,227 @@ if (audioToggle) {
         if (audioCtx.state === 'suspended') audioCtx.resume();
     });
 }
+</script>
+
+<!-- ================================================================
+     LANGUAGE TOGGLE — client-side i18n (en/es/pt)
+     ================================================================ -->
+<script>
+(() => {
+    const TRANSLATIONS = {
+        en: {
+            'nav.brand': 'The Open Stablecoin Card Alliance',
+            'nav.how': 'How It Works',
+            'nav.alliance': 'The Alliance',
+            'nav.faq': 'FAQ',
+            'lang.current': 'English',
+            'hero.powered': 'Powered by Colossus',
+            'hero.title': 'The Open Stablecoin<br>Card <em>Alliance.</em>',
+            'hero.subtitle': 'A coalition of card issuers. A new stablecoin-native credit network.',
+            'hero.body': 'Add a stablecoin credit network to your cards. Keep your legacy network. Founding members shape governance, set interchange policy, and write the rules for a stablecoin-native card network.',
+            'hero.scroll': 'scroll to travel',
+            'atlas.eyebrow': 'Carrying the weight of the world',
+            'atlas.line': 'Shape the network from day one.',
+            'metrics.cards': 'Cards deploying',
+            'metrics.volume': 'Annual volume committed',
+            'metrics.instant': 'INSTANT',
+            'metrics.settlement': 'Stablecoin settlement',
+            'metrics.auth': 'Authorization time',
+            'how.eyebrow': 'How it works',
+            'how.title': 'A card that <em>signs its own transactions.</em>',
+            'how.body': 'Colossus repurposes standard EMVCo. terminals to sign blockchain transactions. Your cardholder taps. The terminal routes to Colossus instead of a legacy network. Settlement happens on-chain in USD-backed stablecoins.',
+            'how.card1.title': 'Patented card cryptography.',
+            'how.card1.desc': 'Each card holds an ECDSA private key in its secure element. A tap generates a signed ERC-4337 transaction. The card <em>is</em> the private key.',
+            'how.card2.title': 'Non-custodial settlement.',
+            'how.card2.desc': 'Colossus never holds your funds. Stablecoins move from cardholder to merchant on a public ledger. You, your cardholder, and the merchant all see the same transaction.',
+            'how.card3.title': 'Fee reduction for merchants.',
+            'how.card3.desc': 'No assessments. No per-auth fees. No batch fees. No interchange downgrades. Merchants pay the tier rate and nothing else.',
+            'alliance.eyebrow': 'The Alliance',
+            'alliance.title': 'The Alliance is modeled on the <em>founding of Visa.</em>',
+            'alliance.body1': 'In 1970, Bank of America transferred ownership of BankAmericard to a cooperative of member banks. That cooperative became Visa Inc.',
+            'alliance.body2': 'Colossus starts as a company-operated network. The Alliance evolves into its governing body. Members earn equity tied to the processing volume they contribute. Your equity share scales with your processing volume.',
+            'alliance.step1': 'Sign MOU',
+            'alliance.step2': 'Dual-issue Colossus',
+            'alliance.step3': 'Acquirer goes live',
+            'alliance.step4': 'Earn equity',
+            'alliance.body3': 'Alliance members sign a binding MOU committing to dual-issue Colossus on their card programs. You keep your Visa or Mastercard relationship. Colossus routes alongside your existing network once Colossus goes live with a merchant acquirer.',
+            'alliance.body4': 'Founding members shape governance, set interchange policy, and write the rules for a stablecoin-native card network.',
+            'faq.eyebrow': 'FAQ',
+            'faq.q1': 'Is Colossus live?',
+            'faq.a1': 'The network runs on testnet with the full transaction lifecycle validated: card cryptography, authorization, on-chain settlement, and dispute resolution. Commercial launch depends on signing the first merchant acquirer, expected 2027.',
+            'faq.q2': 'What does the MOU commit me to?',
+            'faq.a2': 'Adding Colossus as an additional network on your card programs once Colossus goes live with an acquirer. The commitment is forward-looking, not a current routing obligation.',
+            'faq.q3': 'What about disputes and chargebacks?',
+            'faq.a3': 'Colossus has a full dispute lifecycle with reason codes, evidence windows, and arbitration. The structure mirrors Visa and Mastercard consumer protections, settled on-chain.',
+            'faq.q4': 'Who operates the network today?',
+            'faq.a4': 'Colossus, the company. The Consortium\u2019s member-owned governance model activates as the network reaches commercial scale.',
+            'faq.q5': 'Where will transactions settle?',
+            'faq.a5': 'Transactions settle on your respective network. Colossus will manage integration with acquirers and merchants for settlement.',
+            'footer.text': 'OSCA \u2014 The Open Stablecoin Card Alliance'
+        },
+        es: {
+            'nav.brand': 'La Alianza Abierta de Tarjetas con Stablecoins',
+            'nav.how': 'C\u00f3mo Funciona',
+            'nav.alliance': 'La Alianza',
+            'nav.faq': 'Preguntas',
+            'lang.current': 'Espa\u00f1ol',
+            'hero.powered': 'Impulsado por Colossus',
+            'hero.title': 'La Alianza Abierta<br>de Tarjetas con <em>Stablecoins.</em>',
+            'hero.subtitle': 'Una coalici\u00f3n de emisores de tarjetas. Una nueva red de cr\u00e9dito nativa en stablecoins.',
+            'hero.body': 'A\u00f1ade una red de cr\u00e9dito en stablecoins a tus tarjetas. Mant\u00e9n tu red tradicional. Los miembros fundadores definen la gobernanza, establecen la pol\u00edtica de intercambio y escriben las reglas de una red de tarjetas nativa en stablecoins.',
+            'hero.scroll': 'desplaza para viajar',
+            'atlas.eyebrow': 'Cargando el peso del mundo',
+            'atlas.line': 'Da forma a la red desde el primer d\u00eda.',
+            'metrics.cards': 'Tarjetas desplegadas',
+            'metrics.volume': 'Volumen anual comprometido',
+            'metrics.instant': 'INSTANT\u00c1NEA',
+            'metrics.settlement': 'Liquidaci\u00f3n en stablecoin',
+            'metrics.auth': 'Tiempo de autorizaci\u00f3n',
+            'how.eyebrow': 'C\u00f3mo funciona',
+            'how.title': 'Una tarjeta que <em>firma sus propias transacciones.</em>',
+            'how.body': 'Colossus reutiliza terminales EMVCo est\u00e1ndar para firmar transacciones en blockchain. Tu tarjetahabiente toca. El terminal enruta a Colossus en lugar de una red tradicional. La liquidaci\u00f3n ocurre on-chain en stablecoins respaldados por USD.',
+            'how.card1.title': 'Criptograf\u00eda de tarjeta patentada.',
+            'how.card1.desc': 'Cada tarjeta contiene una clave privada ECDSA en su elemento seguro. Un toque genera una transacci\u00f3n ERC-4337 firmada. La tarjeta <em>es</em> la clave privada.',
+            'how.card2.title': 'Liquidaci\u00f3n no custodial.',
+            'how.card2.desc': 'Colossus nunca retiene tus fondos. Los stablecoins se mueven del tarjetahabiente al comercio en un libro p\u00fablico. T\u00fa, tu tarjetahabiente y el comercio ven la misma transacci\u00f3n.',
+            'how.card3.title': 'Reducci\u00f3n de comisiones para comercios.',
+            'how.card3.desc': 'Sin evaluaciones. Sin comisiones por autorizaci\u00f3n. Sin comisiones por lote. Sin downgrades de intercambio. Los comercios pagan la tarifa del nivel y nada m\u00e1s.',
+            'alliance.eyebrow': 'La Alianza',
+            'alliance.title': 'La Alianza se inspira en la <em>fundaci\u00f3n de Visa.</em>',
+            'alliance.body1': 'En 1970, Bank of America transfiri\u00f3 la propiedad de BankAmericard a una cooperativa de bancos miembros. Esa cooperativa se convirti\u00f3 en Visa Inc.',
+            'alliance.body2': 'Colossus comienza como una red operada por la compa\u00f1\u00eda. La Alianza evoluciona hasta convertirse en su \u00f3rgano rector. Los miembros ganan equity vinculado al volumen de procesamiento que aportan. Tu participaci\u00f3n en el equity escala con tu volumen de procesamiento.',
+            'alliance.step1': 'Firmar MOU',
+            'alliance.step2': 'Emitir Colossus',
+            'alliance.step3': 'Adquirente en vivo',
+            'alliance.step4': 'Ganar equity',
+            'alliance.body3': 'Los miembros de la Alianza firman un MOU vinculante comprometi\u00e9ndose a emitir Colossus en sus programas de tarjetas. Mantienes tu relaci\u00f3n con Visa o Mastercard. Colossus enruta junto a tu red actual una vez que Colossus est\u00e1 en vivo con un adquirente comercial.',
+            'alliance.body4': 'Los miembros fundadores definen la gobernanza, establecen la pol\u00edtica de intercambio y escriben las reglas de una red de tarjetas nativa en stablecoins.',
+            'faq.eyebrow': 'Preguntas Frecuentes',
+            'faq.q1': '\u00bfEst\u00e1 Colossus en vivo?',
+            'faq.a1': 'La red funciona en testnet con el ciclo completo de transacciones validado: criptograf\u00eda de tarjeta, autorizaci\u00f3n, liquidaci\u00f3n on-chain y resoluci\u00f3n de disputas. El lanzamiento comercial depende de la firma del primer adquirente comercial, previsto para 2027.',
+            'faq.q2': '\u00bfA qu\u00e9 me compromete el MOU?',
+            'faq.a2': 'A a\u00f1adir Colossus como red adicional en tus programas de tarjetas una vez que Colossus entre en vivo con un adquirente. El compromiso es prospectivo, no una obligaci\u00f3n de enrutamiento actual.',
+            'faq.q3': '\u00bfQu\u00e9 hay con las disputas y contracargos?',
+            'faq.a3': 'Colossus tiene un ciclo de disputas completo con c\u00f3digos de raz\u00f3n, ventanas de evidencia y arbitraje. La estructura refleja las protecciones al consumidor de Visa y Mastercard, liquidadas on-chain.',
+            'faq.q4': '\u00bfQui\u00e9n opera la red hoy?',
+            'faq.a4': 'Colossus, la compa\u00f1\u00eda. El modelo de gobernanza propiedad de los miembros del Consorcio se activa a medida que la red alcanza escala comercial.',
+            'faq.q5': '\u00bfD\u00f3nde se liquidar\u00e1n las transacciones?',
+            'faq.a5': 'Las transacciones se liquidan en la red respectiva. Colossus gestionar\u00e1 la integraci\u00f3n con adquirentes y comercios para la liquidaci\u00f3n.',
+            'footer.text': 'OSCA \u2014 La Alianza Abierta de Tarjetas con Stablecoins'
+        },
+        pt: {
+            'nav.brand': 'A Alian\u00e7a Aberta de Cart\u00f5es com Stablecoins',
+            'nav.how': 'Como Funciona',
+            'nav.alliance': 'A Alian\u00e7a',
+            'nav.faq': 'Perguntas',
+            'lang.current': 'Portugu\u00eas',
+            'hero.powered': 'Desenvolvido por Colossus',
+            'hero.title': 'A Alian\u00e7a Aberta<br>de Cart\u00f5es com <em>Stablecoins.</em>',
+            'hero.subtitle': 'Uma coaliz\u00e3o de emissores de cart\u00f5es. Uma nova rede de cr\u00e9dito nativa em stablecoins.',
+            'hero.body': 'Adicione uma rede de cr\u00e9dito em stablecoins aos seus cart\u00f5es. Mantenha sua rede tradicional. Os membros fundadores moldam a governan\u00e7a, definem a pol\u00edtica de intercambio e escrevem as regras de uma rede de cart\u00f5es nativa em stablecoins.',
+            'hero.scroll': 'role para viajar',
+            'atlas.eyebrow': 'Carregando o peso do mundo',
+            'atlas.line': 'Molde a rede desde o primeiro dia.',
+            'metrics.cards': 'Cart\u00f5es implantados',
+            'metrics.volume': 'Volume anual comprometido',
+            'metrics.instant': 'INSTANT\u00c2NEA',
+            'metrics.settlement': 'Liquida\u00e7\u00e3o em stablecoin',
+            'metrics.auth': 'Tempo de autoriza\u00e7\u00e3o',
+            'how.eyebrow': 'Como funciona',
+            'how.title': 'Um cart\u00e3o que <em>assina suas pr\u00f3prias transa\u00e7\u00f5es.</em>',
+            'how.body': 'A Colossus reutiliza terminais EMVCo padr\u00e3o para assinar transa\u00e7\u00f5es em blockchain. Seu portador aproxima o cart\u00e3o. O terminal roteia para a Colossus em vez de uma rede tradicional. A liquida\u00e7\u00e3o acontece on-chain em stablecoins lastreadas em USD.',
+            'how.card1.title': 'Criptografia de cart\u00e3o patenteada.',
+            'how.card1.desc': 'Cada cart\u00e3o cont\u00e9m uma chave privada ECDSA em seu elemento seguro. Uma aproxima\u00e7\u00e3o gera uma transa\u00e7\u00e3o ERC-4337 assinada. O cart\u00e3o <em>\u00e9</em> a chave privada.',
+            'how.card2.title': 'Liquida\u00e7\u00e3o n\u00e3o custodial.',
+            'how.card2.desc': 'A Colossus nunca ret\u00e9m seus fundos. As stablecoins se movem do portador para o com\u00e9rcio em um livro p\u00fablico. Voc\u00ea, seu portador e o com\u00e9rcio veem a mesma transa\u00e7\u00e3o.',
+            'how.card3.title': 'Redu\u00e7\u00e3o de taxas para comerciantes.',
+            'how.card3.desc': 'Sem avalia\u00e7\u00f5es. Sem taxas por autoriza\u00e7\u00e3o. Sem taxas de lote. Sem downgrades de intercambio. Os comerciantes pagam a taxa do n\u00edvel e nada mais.',
+            'alliance.eyebrow': 'A Alian\u00e7a',
+            'alliance.title': 'A Alian\u00e7a \u00e9 inspirada na <em>funda\u00e7\u00e3o da Visa.</em>',
+            'alliance.body1': 'Em 1970, o Bank of America transferiu a propriedade do BankAmericard para uma cooperativa de bancos membros. Essa cooperativa se tornou a Visa Inc.',
+            'alliance.body2': 'A Colossus come\u00e7a como uma rede operada pela empresa. A Alian\u00e7a evolui para seu \u00f3rg\u00e3o gestor. Os membros ganham equity vinculado ao volume de processamento que contribuem. Sua participa\u00e7\u00e3o no equity escala com seu volume de processamento.',
+            'alliance.step1': 'Assinar MOU',
+            'alliance.step2': 'Emitir Colossus',
+            'alliance.step3': 'Adquirente ao vivo',
+            'alliance.step4': 'Ganhar equity',
+            'alliance.body3': 'Os membros da Alian\u00e7a assinam um MOU vinculante se comprometendo a emitir a Colossus em seus programas de cart\u00f5es. Voc\u00ea mant\u00e9m sua rela\u00e7\u00e3o com Visa ou Mastercard. A Colossus roteia junto \u00e0 sua rede existente assim que a Colossus entra em opera\u00e7\u00e3o com um adquirente comercial.',
+            'alliance.body4': 'Os membros fundadores moldam a governan\u00e7a, definem a pol\u00edtica de intercambio e escrevem as regras de uma rede de cart\u00f5es nativa em stablecoins.',
+            'faq.eyebrow': 'Perguntas Frequentes',
+            'faq.q1': 'A Colossus est\u00e1 ao vivo?',
+            'faq.a1': 'A rede opera em testnet com o ciclo completo de transa\u00e7\u00f5es validado: criptografia de cart\u00e3o, autoriza\u00e7\u00e3o, liquida\u00e7\u00e3o on-chain e resolu\u00e7\u00e3o de disputas. O lan\u00e7amento comercial depende da assinatura do primeiro adquirente comercial, previsto para 2027.',
+            'faq.q2': 'Ao que o MOU me compromete?',
+            'faq.a2': 'A adicionar a Colossus como rede adicional em seus programas de cart\u00f5es quando a Colossus entrar em opera\u00e7\u00e3o com um adquirente. O compromisso \u00e9 prospectivo, n\u00e3o uma obriga\u00e7\u00e3o de roteamento atual.',
+            'faq.q3': 'E quanto a disputas e chargebacks?',
+            'faq.a3': 'A Colossus tem um ciclo de disputas completo com c\u00f3digos de raz\u00e3o, janelas de evid\u00eancia e arbitragem. A estrutura reflete as prote\u00e7\u00f5es ao consumidor da Visa e Mastercard, liquidadas on-chain.',
+            'faq.q4': 'Quem opera a rede hoje?',
+            'faq.a4': 'A Colossus, a empresa. O modelo de governan\u00e7a de propriedade dos membros do Cons\u00f3rcio \u00e9 ativado \u00e0 medida que a rede atinge escala comercial.',
+            'faq.q5': 'Onde as transa\u00e7\u00f5es ser\u00e3o liquidadas?',
+            'faq.a5': 'As transa\u00e7\u00f5es s\u00e3o liquidadas na rede respectiva. A Colossus gerenciar\u00e1 a integra\u00e7\u00e3o com adquirentes e comerciantes para a liquida\u00e7\u00e3o.',
+            'footer.text': 'OSCA \u2014 A Alian\u00e7a Aberta de Cart\u00f5es com Stablecoins'
+        }
+    };
+
+    const STORAGE_KEY = 'osca-lang';
+    const SUPPORTED = ['en', 'es', 'pt'];
+
+    function getInitialLang() {
+        try {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved && SUPPORTED.includes(saved)) return saved;
+        } catch (e) { /* storage may be blocked */ }
+        const nav = (navigator.language || 'en').toLowerCase().slice(0, 2);
+        return SUPPORTED.includes(nav) ? nav : 'en';
+    }
+
+    function applyLang(lang) {
+        const dict = TRANSLATIONS[lang] || TRANSLATIONS.en;
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.getAttribute('data-i18n');
+            if (dict[key] != null) el.textContent = dict[key];
+        });
+        document.querySelectorAll('[data-i18n-html]').forEach(el => {
+            const key = el.getAttribute('data-i18n-html');
+            if (dict[key] != null) el.innerHTML = dict[key];
+        });
+        const cur = document.getElementById('lang-current');
+        if (cur) cur.textContent = dict['lang.current'] || 'English';
+        document.documentElement.lang = lang;
+        document.querySelectorAll('.lang-option').forEach(btn => {
+            btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+        });
+        try { localStorage.setItem(STORAGE_KEY, lang); } catch (e) {}
+    }
+
+    const wrap = document.getElementById('lang-toggle-wrap');
+    const btn = document.getElementById('lang-toggle-btn');
+    if (!wrap || !btn) return;
+
+    btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const open = wrap.classList.toggle('open');
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!wrap.contains(e.target)) {
+            wrap.classList.remove('open');
+            btn.setAttribute('aria-expanded', 'false');
+        }
+    });
+
+    document.querySelectorAll('.lang-option').forEach(opt => {
+        opt.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const lang = opt.getAttribute('data-lang');
+            applyLang(lang);
+            wrap.classList.remove('open');
+            btn.setAttribute('aria-expanded', 'false');
+        });
+    });
+
+    // Initial application
+    applyLang(getInitialLang());
+})();
 </script>
 </body>
 </html>
