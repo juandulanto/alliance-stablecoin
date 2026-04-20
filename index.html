@@ -50,86 +50,10 @@
             z-index: 0;
             pointer-events: none;
             background: #000;        /* black until first frame paints */
-            /* Gently pull down the dim star dust; keep the galaxy bright
-               enough to read as a vivid scene, not a black void. */
-            filter: brightness(0.72) contrast(1.05) saturate(0.95);
-        }
-        /* Soft vignette + behind-title darken pad — enough to lift white
-           text contrast, not enough to kill the scene. */
-        #hero-veil {
-            position: fixed;
-            inset: 0;
-            z-index: 1;
-            pointer-events: none;
-            background:
-                radial-gradient(ellipse 60% 40% at 50% 52%, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.12) 60%, rgba(0,0,0,0.0) 100%),
-                radial-gradient(ellipse at 50% 55%, rgba(0,0,0,0.0) 0%, rgba(0,0,0,0.25) 70%, rgba(0,0,0,0.55) 100%),
-                linear-gradient(180deg, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.05) 32%, rgba(0,0,0,0.05) 68%, rgba(0,0,0,0.4) 100%);
         }
 
-        /* ============================================
-           INTRO-ONLY OVERLAYS
-           Two stacked effects that only live during the opening ~3s and
-           then slowly fade to nothing:
-             1. #hero-nebula-drift — three soft blue-purple radial blobs
-                blended via `screen` so they *add* light like distant gas
-                clouds. A 48s transform animation makes them drift.
-             2. #hero-star-mask — SVG turbulence noise thresholded to
-                ~15% dark specks, blended via `multiply` so it darkens
-                a random fraction of the bright pinpoint stars in the
-                baked video underneath.
-           Both share an introFade keyframe that holds at full through
-           the first half of the animation and then eases to 0.
-           ============================================ */
-        #hero-nebula-drift {
-            position: fixed;
-            inset: 0;
-            z-index: 1;
-            pointer-events: none;
-            background:
-                radial-gradient(ellipse 55% 45% at 32% 48%, rgba(88,110,200,0.16), transparent 62%),
-                radial-gradient(ellipse 60% 50% at 72% 42%, rgba(140,90,190,0.14), transparent 65%),
-                radial-gradient(ellipse 45% 40% at 50% 70%, rgba(72,96,180,0.12), transparent 60%);
-            filter: blur(22px);
-            mix-blend-mode: screen;
-            transform-origin: 50% 50%;
-            opacity: 1;
-            animation:
-                nebulaDrift 48s ease-in-out infinite alternate,
-                introFadeLong 8s ease-out forwards;
-        }
-        @keyframes nebulaDrift {
-            0%   { transform: translate3d(-1.6%,  0.2%, 0) scale(1.00); }
-            50%  { transform: translate3d( 1.4%, -0.6%, 0) scale(1.03); }
-            100% { transform: translate3d( 1.9%,  0.8%, 0) scale(1.06); }
-        }
-        @keyframes introFadeLong {
-            0%, 45% { opacity: 1; }
-            100%    { opacity: 0; }
-        }
-
-        #hero-star-mask {
-            position: fixed;
-            inset: 0;
-            z-index: 1;
-            pointer-events: none;
-            /* Inline SVG: feTurbulence → feColorMatrix threshold yields
-               dark specks at ~35% area coverage. Multiply blend
-               darkens roughly 35% of bright star pixels underneath. */
-            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='720' height='720' preserveAspectRatio='none'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='3.2' numOctaves='1' seed='7' stitchTiles='stitch'/><feColorMatrix type='matrix' values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 15 -9'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
-            background-size: 100% 100%;
-            mix-blend-mode: multiply;
-            opacity: 1;
-            animation: introFadeShort 6s ease-out forwards;
-        }
-        @keyframes introFadeShort {
-            0%, 50% { opacity: 1; }
-            100%    { opacity: 0; }
-        }
-
-        /* Flat 15% black dim layered ABOVE the nebula + star-mask during
-           the intro. Reduces overall star brightness so the opening feels
-           less busy, then fades away together with the other intro FX. */
+        /* Flat 15% black dim during the intro only. Reduces overall star
+           brightness so the opening feels less busy, then fades away. */
         #hero-intro-dim {
             position: fixed;
             inset: 0;
@@ -899,15 +823,9 @@
     })();
 </script>
 
-<!-- Intro-only overlays (fade out over first ~6–8 seconds):
-     subtle drifting blue-purple nebula wash + sparse star mask +
-     flat 15% dim on top so the opening reads darker / less busy -->
-<div id="hero-nebula-drift" aria-hidden="true"></div>
-<div id="hero-star-mask" aria-hidden="true"></div>
+<!-- Intro-only dim: 15% black over the first 8 seconds so the opening
+     frame reads darker and text has contrast before the scene reveals. -->
 <div id="hero-intro-dim" aria-hidden="true"></div>
-
-<!-- Dark vignette for hero text legibility -->
-<div id="hero-veil"></div>
 
 <!-- Scroll hint (hides on scroll) -->
 <div class="scroll-hint" id="scroll-hint" data-i18n="hero.scroll">scroll to travel</div>
@@ -1165,10 +1083,6 @@
     // so the bottom of the scroll has a clear final line.
     const atlasCaption = document.getElementById('atlas-caption');
     const atlasStars = document.getElementById('atlas-stars');
-    // Base video filter — matches the CSS baseline exactly so we can
-    // interpolate toward a +20% punchier "reveal" version at the end.
-    const VIDEO_BASE = { b: 0.72, c: 1.05, s: 0.95 };
-    const VIDEO_REVEAL = { b: 0.72 * 1.20, c: 1.12, s: 0.95 * 1.22 };
     function updateOverlay() {
         if (heroStage) {
             const t = Math.max(0, Math.min(1, (scrollProgress - 0.55) / 0.30));
@@ -1182,14 +1096,6 @@
         if (atlasStars) {
             atlasStars.classList.toggle('on', scrollProgress > 0.78);
         }
-        // Ramp the video filter from baseline → punchier reveal across
-        // scrollProgress 0.60 → 0.98 with a smoothstep for gentle easing.
-        const rt = Math.max(0, Math.min(1, (scrollProgress - 0.60) / 0.38));
-        const rs = rt * rt * (3 - 2 * rt);
-        const b = VIDEO_BASE.b + (VIDEO_REVEAL.b - VIDEO_BASE.b) * rs;
-        const c = VIDEO_BASE.c + (VIDEO_REVEAL.c - VIDEO_BASE.c) * rs;
-        const s = VIDEO_BASE.s + (VIDEO_REVEAL.s - VIDEO_BASE.s) * rs;
-        video.style.filter = `brightness(${b.toFixed(3)}) contrast(${c.toFixed(3)}) saturate(${s.toFixed(3)})`;
         if (scrollHint) scrollHint.style.opacity = scrollProgress > 0.02 ? '0' : '0.8';
     }
 
